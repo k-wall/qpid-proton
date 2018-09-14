@@ -30,6 +30,9 @@
 #include <proton/tracker.hpp>
 #include <proton/types.hpp>
 
+#include <proton/connection_options.hpp>
+#include <proton/ssl.hpp>
+
 #include <iostream>
 #include <map>
 
@@ -51,6 +54,10 @@ class simple_send : public proton::messaging_handler {
 
     void on_container_start(proton::container &c) OVERRIDE {
         proton::connection_options co;
+        proton::ssl_client_options ssl_cli;
+        co.ssl_client_options(ssl_cli);
+        co.sasl_allow_insecure_mechs(true);
+
         if (!user.empty()) co.user(user);
         if (!password.empty()) co.password(password);
         sender = c.open_sender(url, co);

@@ -31,6 +31,9 @@
 #include <proton/messaging_handler.hpp>
 #include <proton/value.hpp>
 
+#include <proton/connection_options.hpp>
+#include <proton/ssl.hpp>
+
 #include <iostream>
 #include <map>
 
@@ -51,6 +54,10 @@ class simple_recv : public proton::messaging_handler {
 
     void on_container_start(proton::container &c) OVERRIDE {
         proton::connection_options co;
+        proton::ssl_client_options ssl_cli;
+        co.ssl_client_options(ssl_cli);
+        co.sasl_allow_insecure_mechs(true);
+
         if (!user.empty()) co.user(user);
         if (!password.empty()) co.password(password);
         receiver = c.open_receiver(url, co);

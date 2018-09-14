@@ -26,6 +26,10 @@
 #include <proton/messaging_handler.hpp>
 #include <proton/tracker.hpp>
 
+
+#include <proton/connection_options.hpp>
+#include <proton/ssl.hpp>
+
 #include <iostream>
 
 #include "fake_cpp11.hpp"
@@ -39,6 +43,15 @@ class hello_world : public proton::messaging_handler {
         conn_url_(u), addr_(a) {}
 
     void on_container_start(proton::container& c) OVERRIDE {
+        proton::ssl_client_options ssl_cli;
+        proton::connection_options client_opts;
+        client_opts.ssl_client_options(ssl_cli);
+        client_opts.sasl_enabled(true);
+        client_opts.sasl_allow_insecure_mechs(true);
+        client_opts.user("guest");
+        client_opts.password("guest");
+        c.client_connection_options(client_opts);
+
         c.connect(conn_url_);
     }
 
